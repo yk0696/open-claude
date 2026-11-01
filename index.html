@@ -29,7 +29,10 @@
   const folder = p.get('folder') || '';
   const q = p.get('q') || '';
   const msg = document.getElementById('msg');
-  if (!/^[A-Za-z]:\\[^\0]*$/.test(folder) || folder.includes('..')) {
+  // Windows（C:\…）と macOS（/Users/… など）の絶対パスだけを受け付ける
+  const isWin = /^[A-Za-z]:\\[^\0]*$/.test(folder);
+  const isMac = /^\/[^\0]*$/.test(folder);
+  if (!(isWin || isMac) || folder.includes('..')) {
     msg.textContent = 'フォルダーの指定がありません（または正しくありません）。';
   } else {
     const url = 'claude://code/new?folder=' + encodeURIComponent(folder) + (q ? '&q=' + encodeURIComponent(q) : '');
